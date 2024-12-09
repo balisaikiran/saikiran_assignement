@@ -33,8 +33,12 @@ class DataIngestionService:
             "failed_records": 0
         }
         
-        # Read CSV in chunks
-        for chunk in pd.read_csv(file_path, chunksize=batch_size):
+        # Read CSV in chunks with specific date parsing
+        for chunk in pd.read_csv(
+            file_path,
+            chunksize=batch_size,
+            parse_dates=['pickup_datetime']
+        ):
             try:
                 # Clean data
                 cleaned_chunk = self.processor.clean_data(chunk)

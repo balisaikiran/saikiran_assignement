@@ -7,11 +7,8 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/taxi_db
-      - REDIS_URL=redis://redis:6380/0
     depends_on:
       db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
     restart: unless-stopped
 

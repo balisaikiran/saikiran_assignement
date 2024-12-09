@@ -1,4 +1,5 @@
 """Main application entry point."""
+from src.database.models import Base
 import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,9 @@ settings = Settings()
 db_manager = DatabaseManager(settings.DATABASE_URL)
 redis_manager = RedisManager(settings)
 rate_limiter = RateLimiter(redis_manager, settings.RATE_LIMIT_PER_MINUTE)
+
+# Create database tables
+Base.metadata.create_all(bind=db_manager.engine)
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -54,15 +58,8 @@ app.add_middleware(
 async def check_rate_limit(request: Request):
     await rate_limiter.check_rate_limit(request)
 
-# Create database tables
-db_manager.create_tables()
-
-# Include REST router with rate limiting
-app.include_router(
-    rest_router,
-    prefix="/api/v1",
-    dependencies=[Depends(check_rate_limit)]
-)
+# Include routers
+app.include_router(rest_router, prefix="/api/v1")
 
 # Remove the direct route addition with dependencies
 # Instead, create a dependency-protected endpoint that serves GraphQL
