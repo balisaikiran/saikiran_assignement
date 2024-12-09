@@ -32,6 +32,8 @@ docker-compose up
 Once the services are running, navigate to the following URL to access the API documentation:
 
 API Documentation
+http://0.0.0.0:8000/docs
+
 API Endpoints
 RESTful Endpoints
 Get Trips
